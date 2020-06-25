@@ -1,0 +1,4 @@
+name: LunaticChat
+version: ${project.version}
+main: xyz.poulton.lunaticchat.bungee.LunaticChatBungee
+author: __lucyy

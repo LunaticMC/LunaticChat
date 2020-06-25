@@ -1,0 +1,17 @@
+# Bukkit config file for LunaticChat
+
+channelFormats:
+  local:
+    - '{"text":"%vault_prefix%%displayname%%vault_prefix%", "color":"white"}'
+    - '{"text":" >> ", "color":"gray"}'
+    - '{"text":"{MESSAGE}", "color":"gray"}'
+  global:
+    - '{"text":"[GLOBAL] ", "color":"yellow"}'
+    - '{"text":"%vault_prefix%%displayname%%vault_prefix%", "color":"white"}'
+    - '{"text":" >> ", "color":"gray"}'
+    - '{"text":"{MESSAGE}", "color":"gray"}'
+  staff:
+    - '{"text":"[STAFF] ", "color":"green"}'
+    - '{"text":"%vault_prefix%%displayname%%vault_prefix%", "color":"white"}'
+    - '{"text":" >> ", "color":"gray"}'
+    - '{"text":"{MESSAGE}", "color":"gray"}'

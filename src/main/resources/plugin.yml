@@ -1,0 +1,16 @@
+name: LunaticChat
+version: ${project.version}
+main: xyz.poulton.lunaticchat.spigot.LunaticChatSpigot
+api-version: 1.15
+authors: [__lucyy]
+description: BungeeCord chat plugin, supporting raw JSON text components
+depend: [PlaceholderAPI]
+commands:
+  channel:
+    description: Set your chat channel
+    usage: "Usage: /channel <channel>"
+    aliases: [ch]
+  reloadchat:
+    description: Reloads chat
+    usage: "Usage: /reloadchat"
+    aliases: [rchat, rch]

@@ -9,5 +9,4 @@ import java.util.UUID;
 
 public class ReturnMessage implements Encodable {
     public BaseComponent[] message;
-    public UUID[] targets;
 }

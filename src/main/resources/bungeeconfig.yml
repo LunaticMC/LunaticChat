@@ -1,0 +1,31 @@
+# in code:
+# strings are lowercased
+# accents are replaced
+
+charsets:
+  $a: "a@&\\*"
+  $e: "e3\\*"
+  $i: "il1!\\*"
+  $o: "o0\\*"
+  $u: "u\\*"
+  $s: "s$\\*"
+
+filter:
+  - '(?<!b|l|m|p)([$a][$sz]{2,})'
+  - 'f[$a$e$u]*[ck]+'
+  - '[$s]+h[$i]*t'
+  - 'b[$i]*t?c+h'
+  - 'c[$o$u]*[ck]+'
+  - 'd[$i]*[ck]+'
+  - 'f[$a]+[g]*'
+  - 't[$a]+r+d'
+  - 'tr+[$a]+n{1,}[yie]+'
+  - 'p[$a$e]+d+[$o]'
+  - 'r[$a]+p+($e+|[$i]s+t|[$i]+n+g)'
+  - 'n[$i]g+[$e]+r'
+  - 'h[$o]+m+[$o]+(?!(sex|pho))'
+  - 'p[$o]+r+n'
+  - '[$s][%i]+[%u]+t'
+  - 'wh+[$o]+r+[$e]'
+  - 's[$e]+x'
+  - '8=+d'

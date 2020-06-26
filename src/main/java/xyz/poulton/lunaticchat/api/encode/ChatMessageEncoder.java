@@ -5,7 +5,6 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.md_5.bungee.chat.ComponentSerializer;
 import xyz.poulton.lunaticchat.api.message.ChatMessage;
-import xyz.poulton.lunaticchat.api.channel.Channel;
 
 import java.util.UUID;
 

@@ -20,6 +20,7 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new SpigotMessageHandler(this));
         saveDefaultConfig();
         loadFormats();
 

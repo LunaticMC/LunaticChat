@@ -15,9 +15,14 @@ public class LunaticChatBungee extends Plugin {
     @Override
     public void onEnable() {
         getProxy().registerChannel("BungeeCord");
-        filter = new ChatFilter(loadFilterPatterns());
+        initFilter();
         getProxy().getPluginManager().registerListener(this, new BungeeMessageHandler(this));
+        getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this));
 
+    }
+
+    public void initFilter() {
+        filter = new ChatFilter(loadFilterPatterns());
     }
 
     public ChatFilter getFilter() {
@@ -33,7 +38,9 @@ public class LunaticChatBungee extends Plugin {
                 InputStream defaultCfg = getResourceAsStream("bungeeconfig.yml");
                 byte[] buffer = new byte[defaultCfg.available()];
                 defaultCfg.read(buffer);
-                new FileOutputStream(configFile).write(buffer);
+                FileOutputStream out = new FileOutputStream(configFile);
+                out.write(buffer);
+                out.close();
                 defaultCfg.close();
             }
 
@@ -52,8 +59,9 @@ public class LunaticChatBungee extends Plugin {
             return exps.toArray(new Pattern[0]);
 
         } catch (IOException e) {
-            return null;
+            e.printStackTrace();
         }
+        return null;
     }
 
     @Override

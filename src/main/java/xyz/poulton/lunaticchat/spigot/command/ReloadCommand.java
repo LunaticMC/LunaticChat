@@ -1,5 +1,6 @@
 package xyz.poulton.lunaticchat.spigot.command;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,11 +15,15 @@ public class ReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        try {
-            plugin.loadFormats();
-            sender.sendMessage("Chat reloaded");
-        } catch (Exception e) {
-            sender.sendMessage("An error occurred whilst reloading the chat config. See the console for more info");
+        if (sender.hasPermission("lunaticchat.reload")) {
+            try {
+                plugin.loadFormats();
+                sender.sendMessage(ChatColor.GREEN + "Chat reloaded");
+            } catch (Exception e) {
+                sender.sendMessage(ChatColor.RED + "An error occurred whilst reloading the chat config. See the console for more info");
+            }
+        } else {
+            sender.sendMessage(ChatColor.RED + "No permission");
         }
         return true;
     }

@@ -27,12 +27,10 @@ public class BungeeMessageHandler implements Listener {
     private final GlobalChannel global = new GlobalChannel();
     private final LocalChannel local = new LocalChannel();
     private final StaffChannel staff = new StaffChannel();
-    private ChatFilter filter;
     private final LunaticChatBungee plugin;
 
     public BungeeMessageHandler(LunaticChatBungee plugin) {
         this.plugin = plugin;
-        filter = plugin.getFilter();
     }
 
 
@@ -56,7 +54,7 @@ public class BungeeMessageHandler implements Listener {
                 channel = local;
             }
 
-            if (!filter.check(componentToPlain(parsedMessage.message))) {
+            if (!plugin.getFilter().check(componentToPlain(parsedMessage.message))) {
                 ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "Please don't say that!"));
             } else {
                 for (ProxiedPlayer p : channel.getTargets(plugin, (ProxiedPlayer) event.getReceiver())) {

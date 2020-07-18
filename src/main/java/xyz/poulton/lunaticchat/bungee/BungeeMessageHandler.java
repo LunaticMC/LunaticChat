@@ -32,8 +32,10 @@ import xyz.poulton.lunaticchat.api.channel.GlobalChannel;
 import xyz.poulton.lunaticchat.api.channel.LocalChannel;
 import xyz.poulton.lunaticchat.api.channel.StaffChannel;
 import xyz.poulton.lunaticchat.api.encode.ChatMessageEncoder;
+import xyz.poulton.lunaticchat.api.encode.PrivateMessageEncoder;
 import xyz.poulton.lunaticchat.api.encode.ReturnMessageEncoder;
 import xyz.poulton.lunaticchat.api.message.ChatMessage;
+import xyz.poulton.lunaticchat.api.message.PrivateMessage;
 import xyz.poulton.lunaticchat.api.message.ReturnMessage;
 
 import static xyz.poulton.lunaticchat.api.ComponentUtils.componentToLegacy;
@@ -84,6 +86,21 @@ public class BungeeMessageHandler implements Listener {
                 } else {
                     plugin.getProxy().getLogger().info(componentToLegacy(parsedMessage.message));
                 }
+            }
+        } else if (action.equals("Private")) {
+            PrivateMessage parsedMessage = new PrivateMessageEncoder(null).decodeMessage(in);
+            if (!plugin.getFilter().check(componentToPlain(parsedMessage.message))) {
+                ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "Please don't say that!"));
+            } else {
+                ProxiedPlayer sender = plugin.getProxy().getPlayer(parsedMessage.sender);
+                ProxiedPlayer target = plugin.getProxy().getPlayer(parsedMessage.target);
+                if (target == null) {
+                    ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "That player isn't online."));
+                    return;
+                }
+                sender.sendMessage(parsedMessage.message);
+                target.sendMessage(parsedMessage.message);
+                plugin.getProxy().getLogger().info(componentToLegacy(parsedMessage.message));
             }
         }
     }

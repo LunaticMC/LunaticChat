@@ -14,26 +14,15 @@
 //    You should have received a copy of the GNU General Public License
 //    along with LunaticChat. If not, see <https://www.gnu.org/licenses/>.
 
-package xyz.poulton.lunaticchat.api.format;
+package xyz.poulton.lunaticchat.api.message;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.entity.Player;
+import xyz.poulton.lunaticchat.api.encode.Encodable;
 
-public class ChatFormat extends TextFormat {
-    public ChatFormat(String[] templates) {
-        super(templates);
-    }
+import java.util.UUID;
 
-    @Override
-    public BaseComponent[] resolve(Player sender, String target, String message) {
-        return resolve(sender, message);
-    }
-
-    @Override
-    public BaseComponent[] resolve(Player sender, String message) {
-        String parsed = PlaceholderAPI.setPlaceholders(sender, template).replace("{MESSAGE}", escape(message));
-        return ComponentSerializer.parse(parsed);
-    }
+public class PrivateMessage implements Encodable {
+    public BaseComponent[] message;
+    public UUID sender;
+    public String target;
 }

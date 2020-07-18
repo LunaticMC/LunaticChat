@@ -14,3 +14,7 @@ commands:
     description: Reloads chat
     usage: "Usage: /reloadchat"
     aliases: [rchat, rch]
+  message:
+    description: Sens a message to another player on the network
+    usage: "Usage: /message <player> <message>"
+    aliases: [msg,tell,t,whisper,w]

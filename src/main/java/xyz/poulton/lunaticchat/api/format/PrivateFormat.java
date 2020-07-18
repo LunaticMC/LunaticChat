@@ -21,19 +21,22 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.entity.Player;
 
-public class ChatFormat extends TextFormat {
-    public ChatFormat(String[] templates) {
+public class PrivateFormat extends TextFormat {
+    public PrivateFormat(String[] templates) {
         super(templates);
     }
 
     @Override
     public BaseComponent[] resolve(Player sender, String target, String message) {
-        return resolve(sender, message);
+        String parsed = PlaceholderAPI.setPlaceholders(sender, template)
+                .replace("{MESSAGE}", escape(message))
+                .replace("{SENDER}", sender.getDisplayName())
+                .replace("{TARGET}", target);
+        return ComponentSerializer.parse(parsed);
     }
 
     @Override
     public BaseComponent[] resolve(Player sender, String message) {
-        String parsed = PlaceholderAPI.setPlaceholders(sender, template).replace("{MESSAGE}", escape(message));
-        return ComponentSerializer.parse(parsed);
+        return null;
     }
 }

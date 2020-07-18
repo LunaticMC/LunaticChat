@@ -11,13 +11,14 @@ charsets:
   $s: "s$\\*"
 
 filter:
-  - '(?<!b|l|m|p)([$a][$sz]{2,})'
-  - 'f[$a$e$u]*[ck]+'
+  - '(?<!b|l|m|p|gr|jon)([$a][$sz]{2,})(?!ume)'
+  - 'f[%u][ck]+'
+  - 'f[$a$e$u]*c+k+'
   - '[$s]+h[$i]*t'
   - 'b[$i]*t?c+h'
-  - 'c[$o$u]*[ck]+'
-  - 'd[$i]*[ck]+'
-  - 'f[$a]+[g]*'
+  - 'c[$o$u][ck]+'
+  - 'd[$i]+[ck]+'
+  - 'f[$a]+[g]+'
   - 't[$a]+r+d'
   - 'tr+[$a]+n{1,}[yie]+'
   - 'p[$a$e]+d+[$o]'

@@ -33,10 +33,15 @@ import xyz.poulton.lunaticchat.api.channel.LocalChannel;
 import xyz.poulton.lunaticchat.api.channel.StaffChannel;
 import xyz.poulton.lunaticchat.api.encode.ChatMessageEncoder;
 import xyz.poulton.lunaticchat.api.encode.PrivateMessageEncoder;
+import xyz.poulton.lunaticchat.api.encode.ReplyMessageEncoder;
 import xyz.poulton.lunaticchat.api.encode.ReturnMessageEncoder;
 import xyz.poulton.lunaticchat.api.message.ChatMessage;
 import xyz.poulton.lunaticchat.api.message.PrivateMessage;
+import xyz.poulton.lunaticchat.api.message.ReplyMessage;
 import xyz.poulton.lunaticchat.api.message.ReturnMessage;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 import static xyz.poulton.lunaticchat.api.ComponentUtils.componentToLegacy;
 import static xyz.poulton.lunaticchat.api.ComponentUtils.componentToPlain;
@@ -51,7 +56,7 @@ public class BungeeMessageHandler implements Listener {
         this.plugin = plugin;
     }
 
-
+    private HashMap<UUID, UUID> lastMessageMap = new HashMap<>();
 
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
@@ -100,8 +105,30 @@ public class BungeeMessageHandler implements Listener {
                 }
                 sender.sendMessage(parsedMessage.message);
                 target.sendMessage(parsedMessage.message);
+                lastMessageMap.put(sender.getUniqueId(), target.getUniqueId());
+                lastMessageMap.put(target.getUniqueId(), sender.getUniqueId());
                 plugin.getProxy().getLogger().info(componentToLegacy(parsedMessage.message));
             }
+        } else if (action.equals("Reply")) {
+            ReplyMessage parsedMessage = new ReplyMessageEncoder(null).decodeMessage(in);
+            UUID targetId = lastMessageMap.get(parsedMessage.sender);
+            if (targetId == null) {
+                ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "You haven't been messaged recently."));
+                return;
+            }
+            ProxiedPlayer sender = plugin.getProxy().getPlayer(parsedMessage.sender);
+            ProxiedPlayer target = plugin.getProxy().getPlayer(targetId);
+
+            if (target == null) {
+                ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "That player is no longer online."));
+                return;
+            }
+
+            sender.sendMessage(parsedMessage.message);
+            target.sendMessage(parsedMessage.message);
+            lastMessageMap.put(sender.getUniqueId(), target.getUniqueId());
+            lastMessageMap.put(target.getUniqueId(), sender.getUniqueId());
+            plugin.getProxy().getLogger().info(componentToLegacy(parsedMessage.message));
         }
     }
 }

@@ -10,13 +10,14 @@ public abstract class TextFormat {
     public TextFormat(String[] templates) {
         StringBuilder completeFormat = new StringBuilder("[");
         for (String original : templates) {
-            if (original.startsWith("{") && original.endsWith("}")) completeFormat.append(original);
+            if (original.startsWith("{") && original.endsWith("}")) completeFormat.append(original).append(",");
             else {
                 ComponentSerializer.parse(original); // this will throw an exception if the formatting is bad
                 if (original.startsWith("[")) {
                     original = original.substring(1, original.length() - 2);
                 }
-                completeFormat.append(original).append(",");
+                completeFormat.append(original);
+                completeFormat.append(",");
             }
         }
         completeFormat.setLength(completeFormat.length() - 1);

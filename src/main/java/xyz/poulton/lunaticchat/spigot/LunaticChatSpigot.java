@@ -43,8 +43,9 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
 
         this.getCommand("channel").setExecutor(new ChannelCommand(this));
         this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
+        this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
         this.getCommand("message").setExecutor(new MessageCommand(this,
-                new PrivateFormat(getConfig().getStringList("channelFormats.local").toArray(new String[0]))));
+                new PrivateFormat(getConfig().getStringList("privateMessage").toArray(new String[0]))));
     }
 
     public void loadFormats() {
@@ -53,6 +54,8 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
         ChatFormat globalFormat = new ChatFormat(getConfig().getStringList("channelFormats.global").toArray(new String[0]));
         ChatFormat staffFormat = new ChatFormat(getConfig().getStringList("channelFormats.staff").toArray(new String[0]));
         handler.initFormats(localFormat, globalFormat, staffFormat);
+        this.getCommand("message").setExecutor(new MessageCommand(this,
+                new PrivateFormat(getConfig().getStringList("privateMessage").toArray(new String[0]))));
     }
 
     @Override

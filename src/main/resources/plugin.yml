@@ -15,6 +15,10 @@ commands:
     usage: "Usage: /reloadchat"
     aliases: [rchat, rch]
   message:
-    description: Sens a message to another player on the network
+    description: Sends a message to another player on the network
     usage: "Usage: /message <player> <message>"
     aliases: [msg,tell,t,whisper,w]
+  reply:
+    description: Replies to a message from another player on the network
+    usage: "Usage: /reply <message>"
+    aliases: [r]

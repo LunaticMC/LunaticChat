@@ -30,6 +30,7 @@ import xyz.poulton.lunaticchat.spigot.channel.ChannelHandler;
 import xyz.poulton.lunaticchat.spigot.command.ChannelCommand;
 import xyz.poulton.lunaticchat.spigot.command.MessageCommand;
 import xyz.poulton.lunaticchat.spigot.command.ReloadCommand;
+import xyz.poulton.lunaticchat.spigot.command.ReplyCommand;
 
 public final class LunaticChatSpigot extends JavaPlugin implements Listener {
     private final ChannelHandler handler = new ChannelHandler();
@@ -44,8 +45,6 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
         this.getCommand("channel").setExecutor(new ChannelCommand(this));
         this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
         this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
-        this.getCommand("message").setExecutor(new MessageCommand(this,
-                new PrivateFormat(getConfig().getStringList("privateMessage").toArray(new String[0]))));
     }
 
     public void loadFormats() {
@@ -54,8 +53,9 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
         ChatFormat globalFormat = new ChatFormat(getConfig().getStringList("channelFormats.global").toArray(new String[0]));
         ChatFormat staffFormat = new ChatFormat(getConfig().getStringList("channelFormats.staff").toArray(new String[0]));
         handler.initFormats(localFormat, globalFormat, staffFormat);
-        this.getCommand("message").setExecutor(new MessageCommand(this,
-                new PrivateFormat(getConfig().getStringList("privateMessage").toArray(new String[0]))));
+        PrivateFormat privateFormat = new PrivateFormat(getConfig().getStringList("privateMessage").toArray(new String[0]));
+        this.getCommand("message").setExecutor(new MessageCommand(this, privateFormat));
+        this.getCommand("reply").setExecutor(new ReplyCommand(this, privateFormat));
     }
 
     @Override
@@ -68,7 +68,7 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
     public void on(AsyncPlayerChatEvent e) {
         if (e.getPlayer().hasPermission("lunaticchat.format"))
             e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
-        e.setCancelled(true);
+        e.getRecipients().clear();
         Channel channel = handler.getPlayerChannel(e.getPlayer());
         channel.sendMessage(e.getPlayer(), e.getMessage(), this);
     }

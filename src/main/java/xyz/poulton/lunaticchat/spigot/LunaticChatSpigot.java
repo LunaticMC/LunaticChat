@@ -16,9 +16,8 @@
 
 package xyz.poulton.lunaticchat.spigot;
 
-
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,7 +26,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.poulton.lunaticchat.api.channel.Channel;
 import xyz.poulton.lunaticchat.api.format.ChatFormat;
 import xyz.poulton.lunaticchat.api.format.PrivateFormat;
-import xyz.poulton.lunaticchat.spigot.SpigotMessageHandler;
 import xyz.poulton.lunaticchat.spigot.channel.ChannelHandler;
 import xyz.poulton.lunaticchat.spigot.command.ChannelCommand;
 import xyz.poulton.lunaticchat.spigot.command.MessageCommand;
@@ -37,54 +35,49 @@ import xyz.poulton.lunaticchat.spigot.command.ReplyCommand;
 public final class LunaticChatSpigot extends JavaPlugin implements Listener {
     private final ChannelHandler handler = new ChannelHandler();
     final String prefixes = "#";
-
-    public LunaticChatSpigot() {
-    }
-
+    
+    @Override
     public void onEnable() {
-        this.getServer().getPluginManager().registerEvents(this, this);
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new SpigotMessageHandler(this));
-        this.saveDefaultConfig();
-        this.loadFormats();
+        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new SpigotMessageHandler(this));
+        saveDefaultConfig();
+        loadFormats();
+
         this.getCommand("channel").setExecutor(new ChannelCommand(this));
         this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
         this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
     }
 
-
     public void loadFormats() {
-        this.reloadConfig();
-        ChatFormat localFormat = new ChatFormat((String[])this.getConfig().getStringList("channelFormats.local").toArray(new String[0]));
-        ChatFormat globalFormat = new ChatFormat((String[])this.getConfig().getStringList("channelFormats.global").toArray(new String[0]));
-        ChatFormat staffFormat = new ChatFormat((String[])this.getConfig().getStringList("channelFormats.staff").toArray(new String[0]));
-        this.handler.initFormats(localFormat, globalFormat, staffFormat);
-        PrivateFormat privateFormat = new PrivateFormat((String[])this.getConfig().getStringList("privateMessage").toArray(new String[0]));
+        reloadConfig();
+        ChatFormat localFormat = new ChatFormat(getConfig().getStringList("channelFormats.local").toArray(new String[0]));
+        ChatFormat globalFormat = new ChatFormat(getConfig().getStringList("channelFormats.global").toArray(new String[0]));
+        ChatFormat staffFormat = new ChatFormat(getConfig().getStringList("channelFormats.staff").toArray(new String[0]));
+        handler.initFormats(localFormat, globalFormat, staffFormat);
+        PrivateFormat privateFormat = new PrivateFormat(getConfig().getStringList("privateMessage").toArray(new String[0]));
         this.getCommand("message").setExecutor(new MessageCommand(this, privateFormat));
         this.getCommand("reply").setExecutor(new ReplyCommand(this, privateFormat));
     }
 
+    @Override
     public void onDisable() {
     }
 
-    public ChannelHandler getChannelHandler() {
-        return this.handler;
-    }
+    public ChannelHandler getChannelHandler() { return handler; }
 
-    @EventHandler(
-            priority = EventPriority.HIGHEST
-    )
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void on(AsyncPlayerChatEvent e) {
-        if (e.getPlayer().hasPermission("lunaticchat.format")) {
+        if (e.getPlayer().hasPermission("lunaticchat.format"))
             e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
-        }
+        
         Player player = (Player) e.getPlayer();
         if (e.getMessage().startsWith(this.prefixes)) {
             if (player.hasPermission("lunaticchat.staff")) {
                 String originalChannel = String.valueOf(this.handler.getPlayerChannel(e.getPlayer()));
                 this.getChannelHandler().setPlayerChannel(player, "staff");
                 e.setMessage(e.getMessage().replace(this.prefixes, ""));
-                e.setCancelled(true);
+                e.getRecipients().clear();
                 Channel channel = this.handler.getPlayerChannel(e.getPlayer());
                 channel.sendMessage(e.getPlayer(), e.getMessage(), this);
                 this.handler.setPlayerChannel(player, originalChannel);
@@ -92,10 +85,9 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
 
             }
         }
-
-        e.setCancelled(true);
-        Channel channel = this.handler.getPlayerChannel(e.getPlayer());
+        
+        e.getRecipients().clear();
+        Channel channel = handler.getPlayerChannel(e.getPlayer());
         channel.sendMessage(e.getPlayer(), e.getMessage(), this);
     }
 }
-

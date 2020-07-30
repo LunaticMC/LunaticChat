@@ -39,6 +39,12 @@ public class ChannelHandler {
         staffChannel = new StaffChannel(staffFormat);
     }
 
+    public Channel getLocalChannel() { return localChannel; }
+
+    public Channel getGlobalChannel() { return globalChannel; }
+
+    public Channel getStaffChannel() { return staffChannel; }
+    
     public Channel getPlayerChannel(Player player) {
         String channel = channelMap.get(player.getUniqueId());
         if (channel == null) return localChannel;

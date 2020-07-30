@@ -16,6 +16,7 @@
 
 package xyz.poulton.lunaticchat.spigot;
 
+import org.bukkit.entity.Player;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -34,6 +35,8 @@ import xyz.poulton.lunaticchat.spigot.command.ReplyCommand;
 
 public final class LunaticChatSpigot extends JavaPlugin implements Listener {
     private final ChannelHandler handler = new ChannelHandler();
+    final String prefixes = "#";
+    
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
@@ -68,8 +71,18 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
     public void on(AsyncPlayerChatEvent e) {
         if (e.getPlayer().hasPermission("lunaticchat.format"))
             e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
+
         e.getRecipients().clear();
         Channel channel = handler.getPlayerChannel(e.getPlayer());
+        if (e.getMessage().startsWith(this.prefixes)) {
+            Player player = e.getPlayer();
+            if (player.hasPermission("lunaticchat.staff")) {
+                e.setMessage(e.getMessage().substring(1));
+                channel = this.handler.getStaffChannel();
+
+            }
+        }
+
         channel.sendMessage(e.getPlayer(), e.getMessage(), this);
     }
 }

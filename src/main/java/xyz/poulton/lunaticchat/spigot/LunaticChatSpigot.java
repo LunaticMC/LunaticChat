@@ -86,7 +86,6 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
         } else {
             e.getRecipients().clear();
         }
-
         channel.sendMessage(e.getPlayer(), e.getMessage(), this);
     }
 }

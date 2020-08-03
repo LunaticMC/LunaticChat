@@ -2,7 +2,7 @@ name: LunaticChat
 version: ${project.version}
 main: xyz.poulton.lunaticchat.spigot.LunaticChatSpigot
 api-version: 1.15
-authors: [__lucyy]
+authors: [__lucyy, Yccheetah]
 description: BungeeCord chat plugin, supporting raw JSON text components
 depend: [PlaceholderAPI]
 commands:

@@ -67,22 +67,25 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
 
     public ChannelHandler getChannelHandler() { return handler; }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void on(AsyncPlayerChatEvent e) {
-        if (e.getPlayer().hasPermission("lunaticchat.format"))
+        if (e.getPlayer().hasPermission("lunaticchat.format")) {
             e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
+        }
 
-        e.getRecipients().clear();
-        Channel channel = handler.getPlayerChannel(e.getPlayer());
-        if (e.getMessage().startsWith(this.prefixes)) {
+        Channel channel = this.handler.getPlayerChannel(e.getPlayer());
+        if (e.getMessage().startsWith("#")) {
             Player player = e.getPlayer();
             if (player.hasPermission("lunaticchat.staff")) {
                 e.setMessage(e.getMessage().substring(1));
                 channel = this.handler.getStaffChannel();
-
             }
         }
-
+        if (channel.equals(this.handler.getStaffChannel())) {
+            e.setCancelled(true);
+        } else {
+            e.getRecipients().clear();
+        }
         channel.sendMessage(e.getPlayer(), e.getMessage(), this);
     }
 }

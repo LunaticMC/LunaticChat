@@ -67,7 +67,7 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
 
     public ChannelHandler getChannelHandler() { return handler; }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void on(AsyncPlayerChatEvent e) {
         if (e.getPlayer().hasPermission("lunaticchat.format")) {
             e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));

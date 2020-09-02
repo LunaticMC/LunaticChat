@@ -6,7 +6,7 @@
 
     <groupId>xyz.poulton</groupId>
     <artifactId>LunaticChat</artifactId>
-    <version>1.0.5</version>
+    <version>DEV</version>
     <packaging>jar</packaging>
 
     <name>LunaticChat</name>

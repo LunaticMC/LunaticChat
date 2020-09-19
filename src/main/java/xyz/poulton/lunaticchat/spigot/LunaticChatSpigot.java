@@ -28,10 +28,7 @@ import xyz.poulton.lunaticchat.api.channel.Channel;
 import xyz.poulton.lunaticchat.api.format.ChatFormat;
 import xyz.poulton.lunaticchat.api.format.PrivateFormat;
 import xyz.poulton.lunaticchat.spigot.channel.ChannelHandler;
-import xyz.poulton.lunaticchat.spigot.command.ChannelCommand;
-import xyz.poulton.lunaticchat.spigot.command.MessageCommand;
-import xyz.poulton.lunaticchat.spigot.command.ReloadCommand;
-import xyz.poulton.lunaticchat.spigot.command.ReplyCommand;
+import xyz.poulton.lunaticchat.spigot.command.*;
 
 public final class LunaticChatSpigot extends JavaPlugin implements Listener {
     private final ChannelHandler handler = new ChannelHandler();
@@ -47,7 +44,7 @@ public final class LunaticChatSpigot extends JavaPlugin implements Listener {
 
         this.getCommand("channel").setExecutor(new ChannelCommand(this));
         this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
-        this.getCommand("reloadchat").setExecutor(new ReloadCommand(this));
+        this.getCommand("socialspy").setExecutor(new SocialSpyCommand(this));
     }
 
     public void loadFormats() {

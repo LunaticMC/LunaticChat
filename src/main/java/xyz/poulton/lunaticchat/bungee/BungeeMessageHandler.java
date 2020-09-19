@@ -22,6 +22,7 @@ import com.google.common.io.ByteStreams;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -31,15 +32,10 @@ import xyz.poulton.lunaticchat.api.channel.Channel;
 import xyz.poulton.lunaticchat.api.channel.GlobalChannel;
 import xyz.poulton.lunaticchat.api.channel.LocalChannel;
 import xyz.poulton.lunaticchat.api.channel.StaffChannel;
-import xyz.poulton.lunaticchat.api.encode.ChatMessageEncoder;
-import xyz.poulton.lunaticchat.api.encode.PrivateMessageEncoder;
-import xyz.poulton.lunaticchat.api.encode.ReplyMessageEncoder;
-import xyz.poulton.lunaticchat.api.encode.ReturnMessageEncoder;
-import xyz.poulton.lunaticchat.api.message.ChatMessage;
-import xyz.poulton.lunaticchat.api.message.PrivateMessage;
-import xyz.poulton.lunaticchat.api.message.ReplyMessage;
-import xyz.poulton.lunaticchat.api.message.ReturnMessage;
+import xyz.poulton.lunaticchat.api.encode.*;
+import xyz.poulton.lunaticchat.api.message.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -58,6 +54,19 @@ public class BungeeMessageHandler implements Listener {
     }
 
     private HashMap<UUID, UUID> lastMessageMap = new HashMap<>();
+    private ArrayList<UUID> socialSpies = new ArrayList<>();
+
+    public void sendPrivateMessage(ProxiedPlayer sender, ProxiedPlayer target, BaseComponent[] message) {
+        sender.sendMessage(message);
+        target.sendMessage(message);
+        lastMessageMap.put(sender.getUniqueId(), target.getUniqueId());
+        lastMessageMap.put(target.getUniqueId(), sender.getUniqueId());
+        for (UUID uuid : socialSpies) {
+            ProxiedPlayer player = plugin.getProxy().getPlayer(uuid);
+            if (player == null) socialSpies.remove(uuid);
+            else player.sendMessage(new ComponentBuilder("[SPY] ").color(ChatColor.RED).append(message).create());
+        }
+    }
 
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
@@ -93,7 +102,8 @@ public class BungeeMessageHandler implements Listener {
                     plugin.getProxy().getLogger().info(componentToLegacy(parsedMessage.message));
                 }
             }
-        } else if (action.equals("Private")) {
+        }
+        else if (action.equals("Private")) {
             PrivateMessage parsedMessage = new PrivateMessageEncoder(null).decodeMessage(in);
             if (!plugin.getFilter().check(componentToPlain(parsedMessage.message))) {
                 ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "Please don't say that!"));
@@ -104,13 +114,11 @@ public class BungeeMessageHandler implements Listener {
                     ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "That player isn't online."));
                     return;
                 }
-                sender.sendMessage(parsedMessage.message);
-                target.sendMessage(parsedMessage.message);
-                lastMessageMap.put(sender.getUniqueId(), target.getUniqueId());
-                lastMessageMap.put(target.getUniqueId(), sender.getUniqueId());
+                sendPrivateMessage(sender, target, parsedMessage.message);
                 plugin.getProxy().getLogger().info(componentToLegacy(parsedMessage.message));
             }
-        } else if (action.equals("Reply")) {
+        }
+        else if (action.equals("Reply")) {
             ReplyMessage parsedMessage = new ReplyMessageEncoder(null).decodeMessage(in);
             UUID targetId = lastMessageMap.get(parsedMessage.sender);
             if (targetId == null) {
@@ -137,11 +145,19 @@ public class BungeeMessageHandler implements Listener {
                 }
             }
 
-            sender.sendMessage(parsedMessage.message);
-            target.sendMessage(parsedMessage.message);
-            lastMessageMap.put(sender.getUniqueId(), target.getUniqueId());
-            lastMessageMap.put(target.getUniqueId(), sender.getUniqueId());
+            sendPrivateMessage(sender, target, parsedMessage.message);
+
             plugin.getProxy().getLogger().info(componentToLegacy(parsedMessage.message));
+        }
+        else if (action.equals("SpyToggle")) {
+            SpyToggleMessage parsedMessage = new SpyToggleMessageEncoder(null).decodeMessage(in);
+            if (socialSpies.contains(parsedMessage.uuid)) {
+                socialSpies.remove(parsedMessage.uuid);
+                ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.GREEN + "Social spy disabled."));
+            } else {
+                socialSpies.add(parsedMessage.uuid);
+                ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.GREEN + "Social spy enabled."));
+            }
         }
     }
 }

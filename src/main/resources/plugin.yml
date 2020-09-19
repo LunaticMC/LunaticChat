@@ -22,3 +22,7 @@ commands:
     description: Replies to a message from another player on the network
     usage: "Usage: /reply <message>"
     aliases: [r]
+  socialspy:
+    description: Show other people's messages
+    usage: "Usage: /socialspy"
+    aliases: [ spy, ss ]

@@ -41,6 +41,7 @@ import xyz.poulton.lunaticchat.api.message.ReplyMessage;
 import xyz.poulton.lunaticchat.api.message.ReturnMessage;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import static xyz.poulton.lunaticchat.api.ComponentUtils.componentToLegacy;
@@ -122,6 +123,18 @@ public class BungeeMessageHandler implements Listener {
             if (target == null) {
                 ((ProxiedPlayer) event.getReceiver()).sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "That player is no longer online."));
                 return;
+            }
+
+            for (int i = 0; i < parsedMessage.message.length; i++) {
+                List<BaseComponent> extra = parsedMessage.message[i].getExtra();
+                for (int x = 0; x < extra.toArray().length; x++)
+                if (extra.get(x).toPlainText().equals("{TARGET}")) {
+                    TextComponent replacement = new TextComponent(target.getName());
+                    extra.get(x).copyFormatting(replacement);
+                    extra.set(x, replacement);
+                    parsedMessage.message[i].setExtra(extra);
+                    break;
+                }
             }
 
             sender.sendMessage(parsedMessage.message);

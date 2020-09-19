@@ -45,7 +45,7 @@ public class MessageCommand implements CommandExecutor {
         if (args.length < 2) return false;
 
         StringBuilder message = new StringBuilder();
-        for (int i = 1; i == args.length -1; i++) {
+        for (int i = 1; i < args.length; i++) {
             message.append(args[i]).append(" ");
         }
 
